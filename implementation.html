@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implementation Services — Ahamsys Consultancy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #1c2331;
+    --paper: #f8f9fb;
+    --accent: #2558c4;
+    --accent2: #c0533a;
+    --muted: #6b7585;
+    --border: rgba(28,35,49,0.1);
+    --card-bg: #ffffff;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Source Sans 3', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(245,243,238,0.85);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600; font-size: 1.55rem;
+    color: var(--ink); text-decoration: none;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 0.55rem;
+  }
+  .logo img { height: 36px; width: auto; display: block; }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.875rem; font-weight: 500; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.01em;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    background: var(--ink); color: var(--paper) !important;
+    padding: 0.55rem 1.4rem; border-radius: 100px;
+    font-weight: 500 !important; font-size: 0.875rem !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--accent) !important; color: #fff !important; }
+  .back-link {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    padding: 8rem 4rem 4rem;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -20%; right: -10%;
+    width: 70vw; height: 70vw; max-width: 900px; max-height: 900px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(26,86,219,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+    background: rgba(26,86,219,0.08);
+    padding: 0.35rem 0.9rem; border-radius: 100px;
+    margin-bottom: 1.5rem;
+    animation: fadeUp 0.7s 0.1s ease both;
+    width: fit-content;
+  }
+  .hero-eyebrow::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); display: block;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.4rem, 4vw, 4rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    animation: fadeUp 0.7s 0.25s ease both;
+    max-width: 700px;
+  }
+  .hero-sub {
+    margin-top: 1.5rem;
+    font-size: 1.05rem; line-height: 1.7; color: var(--muted);
+    max-width: 600px; font-weight: 300;
+    animation: fadeUp 0.7s 0.4s ease both;
+  }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 7rem 4rem; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent);
+    margin-bottom: 1rem;
+  }
+  .section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.75rem, 3vw, 2.6rem);
+    font-weight: 700; line-height: 1.18;
+    letter-spacing: -0.01em; color: var(--ink);
+    max-width: 700px;
+  }
+  .section-sub {
+    margin-top: 1rem; font-size: 1rem;
+    line-height: 1.75; color: var(--muted);
+    max-width: 620px; font-weight: 300;
+  }
+
+  /* ── IMPLEMENTATION PROCESS ── */
+  #process { background: var(--paper); }
+  .process-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; margin-top: 3rem; }
+  .process-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+  }
+  .process-item::after {
+    content: '';
+    position: absolute;
+    top: 40px;
+    right: -1rem;
+    width: 2rem;
+    height: 2px;
+    background: var(--border);
+    display: none;
+  }
+  .process-item:not(:last-child)::after { display: block; }
+  .process-num {
+    width: 50px; height: 50px;
+    background: var(--accent);
+    color: var(--paper);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+  }
+  .process-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600; font-size: 1.05rem;
+    color: var(--ink);
+  }
+  .process-desc {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* ── SERVICES DETAIL ── */
+  #services-detail { background: var(--card-bg); }
+  .services-detail-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+  .service-detail-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2rem;
+    transition: all 0.3s;
+  }
+  .service-detail-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 48px rgba(10,14,26,0.09);
+    border-color: var(--accent);
+  }
+  .sd-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+  .sd-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.8rem;
+    color: var(--ink);
+  }
+  .sd-desc {
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--muted);
+    font-weight: 300;
+  }
+  .sd-features {
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid var(--border);
+  }
+  .sd-feature {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.6rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .sd-feature::before {
+    content: '✓';
+    color: var(--accent);
+    font-weight: bold;
+    min-width: 1rem;
+  }
+
+  /* ── CR2 PRODUCTS ── */
+  #cr2-products {
+    background: linear-gradient(135deg, #f8f9fb 0%, #eef1f8 100%);
+  }
+  .cr2-intro {
+    background: var(--card-bg);
+    border: 2px solid var(--accent);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-top: 2rem;
+    position: relative;
+  }
+  .cr2-intro::before {
+    content: 'Partnership';
+    position: absolute;
+    top: -12px;
+    left: 20px;
+    background: var(--card-bg);
+    padding: 0 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .cr2-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+  .cr2-text h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--ink);
+  }
+  .cr2-text p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+  .cr2-highlights {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .cr2-highlight {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+  .cr2-highlight-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(26,86,219,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .cr2-highlight-content h4 {
+    font-weight: 600;
+    font-size: 0.95rem;
+    margin-bottom: 0.2rem;
+    color: var(--ink);
+  }
+  .cr2-highlight-content p {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0;
+  }
+  .cr2-logo {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    height: 200px;
+  }
+
+  /* ── CTA SECTION ── */
+  #implementation-cta {
+    background: var(--ink);
+    text-align: center;
+    padding: 8rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  #implementation-cta::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    width: 800px;
+    height: 800px;
+    border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(26,86,219,0.15) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  #implementation-cta .section-heading { color: var(--paper); max-width: 700px; margin: 0 auto; }
+  #implementation-cta .section-sub { color: rgba(245,243,238,0.55); max-width: 500px; margin: 1rem auto 0; }
+  .cta-buttons { margin-top: 2.5rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--accent); color: #fff;
+    padding: 0.85rem 2rem; border-radius: 100px;
+    font-size: 0.925rem; font-weight: 500; text-decoration: none;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { background: #1a4aa0; transform: translateY(-2px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    border: 1px solid rgba(245,243,238,0.25);
+    color: var(--paper);
+    padding: 0.85rem 2rem;
+    border-radius: 100px;
+    font-size: 0.925rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .btn-secondary:hover { border-color: var(--paper); background: rgba(245,243,238,0.05); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #060810;
+    padding: 2rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    color: rgba(245,243,238,0.3);
+    font-size: 0.8rem;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  footer .logo { color: rgba(245,243,238,0.4); }
+  footer .logo span { color: var(--accent); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeLeft {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  /* ── SCROLL REVEAL ── */
+  .reveal {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .hero { padding: 6rem 1.5rem 3rem; }
+    section { padding: 5rem 1.5rem; }
+    .process-grid { grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .process-item::after { display: none !important; }
+    .services-detail-grid { grid-template-columns: 1fr; }
+    .cr2-content { grid-template-columns: 1fr; }
+    #implementation-cta { padding: 5rem 1.5rem; }
+    footer { padding: 1.5rem; }
+  }
+  @media (max-width: 560px) {
+    .process-grid { grid-template-columns: 1fr; }
+    .services-detail-grid { grid-template-columns: 1fr; }
+    .cta-buttons { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="index.html"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/4RDyRXhpZgAATU0AKgAAAAgABAE7AAIAAAANAAAISodpAAQAAAABAAAIWJydAAEAAAAaAAAQ0OocAAcAAAgMAAAAPgAAAAAc6gAAAAgAAAAAAAAA[...]" alt="Ahamsys"> Ahamsys</a>
+  <ul class="nav-links">
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="index.html#industries">Industries</a></li>
+    <li><a href="index.html#why">Why Us</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <a href="index.html" class="back-link">← Back to home</a>
+  <div class="hero-text" style="margin-top: 2rem;">
+    <div class="hero-eyebrow">Implementation Services</div>
+    <h1>Seamless platform deployment, zero disruption.</h1>
+    <p class="hero-sub">We specialize in configuring, customizing, and deploying enterprise systems and third-party platforms with meticulous planning and flawless execution.</p>
+  </div>
+</section>
+
+<!-- IMPLEMENTATION PROCESS -->
+<section id="process">
+  <div class="section-label">How we work</div>
+  <h2 class="section-heading">Our proven implementation methodology.</h2>
+  <p class="section-sub">Every deployment follows a structured, risk-mitigated approach to ensure on-time delivery and business continuity.</p>
+
+  <div class="process-grid reveal">
+    <div class="process-item">
+      <div class="process-num">1</div>
+      <div class="process-title">Discovery & Assessment</div>
+      <div class="process-desc">We map your current systems, understand business requirements, and identify integration points before a single line of configuration is written.</div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">2</div>
+      <div class="process-title">Planning & Design</div>
+      <div class="process-desc">Detailed project roadmap, data migration strategy, custom module design, and rollout phasing — all with stakeholder approval.</div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">3</div>
+      <div class="process-title">Configuration & Development</div>
+      <div class="process-desc">Platform configuration, custom Apex code, API integrations, and bespoke modules built to your exact business logic.</div>
+    </div>
+    <div class="process-item">
+      <div class="process-num">4</div>
+      <div class="process-title">Testing & UAT</div>
+      <div class="process-desc">Rigorous QA, user acceptance testing, performance validation, and security audits before any go-live.</div>
+    </div>
+  </div>
+</section>
+
+<!-- IMPLEMENTATION DETAILS -->
+<section id="services-detail">
+  <div class="section-label">What we deliver</div>
+  <h2 class="section-heading">End-to-end implementation excellence.</h2>
+  <p class="section-sub">From platform selection to ongoing optimization, we own every phase of your implementation journey.</p>
+
+  <div class="services-detail-grid reveal">
+    <div class="service-detail-card">
+      <div class="sd-icon">🏗️</div>
+      <div class="sd-title">Platform Configuration</div>
+      <div class="sd-desc">Salesforce, NetSuite, Workday, and other enterprise platforms customized to your unique business processes.</div>
+      <div class="sd-features">
+        <div class="sd-feature">Custom object design</div>
+        <div class="sd-feature">Workflow automation</div>
+        <div class="sd-feature">Permission & security setup</div>
+        <div class="sd-feature">Data model optimization</div>
+      </div>
+    </div>
+    <div class="service-detail-card">
+      <div class="sd-icon">🔗</div>
+      <div class="sd-title">Systems Integration</div>
+      <div class="sd-desc">Seamless data flow between new platforms and legacy systems via APIs, middleware, or ETL pipelines.</div>
+      <div class="sd-features">
+        <div class="sd-feature">API development & management</div>
+        <div class="sd-feature">Data synchronization</div>
+        <div class="sd-feature">Third-party connectors</div>
+        <div class="sd-feature">Real-time data validation</div>
+      </div>
+    </div>
+    <div class="service-detail-card">
+      <div class="sd-icon">📦</div>
+      <div class="sd-title">Data Migration</div>
+      <div class="sd-desc">Safe, accurate data transfer from legacy systems with zero data loss and comprehensive validation.</div>
+      <div class="sd-features">
+        <div class="sd-feature">Data mapping & cleansing</div>
+        <div class="sd-feature">Bulk migration tools</div>
+        <div class="sd-feature">Audit trails & reconciliation</div>
+        <div class="sd-feature">Rollback readiness</div>
+      </div>
+    </div>
+    <div class="service-detail-card">
+      <div class="sd-icon">👥</div>
+      <div class="sd-title">User Training & Change Management</div>
+      <div class="sd-desc">Comprehensive training programs and change management strategies to ensure rapid user adoption.</div>
+      <div class="sd-features">
+        <div class="sd-feature">Role-based training sessions</div>
+        <div class="sd-feature">Documentation & guides</div>
+        <div class="sd-feature">Change impact assessment</div>
+        <div class="sd-feature">Ongoing support sprints</div>
+      </div>
+    </div>
+    <div class="service-detail-card">
+      <div class="sd-icon">✅</div>
+      <div class="sd-title">Quality Assurance & Testing</div>
+      <div class="sd-desc">Multi-phase testing strategy ensuring functionality, performance, security, and business continuity.</div>
+      <div class="sd-features">
+        <div class="sd-feature">Functional & regression testing</div>
+        <div class="sd-feature">Load & stress testing</div>
+        <div class="sd-feature">Security & penetration testing</div>
+        <div class="sd-feature">UAT coordination</div>
+      </div>
+    </div>
+    <div class="service-detail-card">
+      <div class="sd-icon">🚀</div>
+      <div class="sd-title">Deployment & Go-Live Support</div>
+      <div class="sd-desc">Controlled, phased rollout with 24/7 war-room support to handle any issues in real-time.</div>
+      <div class="sd-features">
+        <div class="sd-feature">Phased rollout planning</div>
+        <div class="sd-feature">Parallel-run support</div>
+        <div class="sd-feature">Incident response team</div>
+        <div class="sd-feature">Post-go-live stabilization</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CR2 PRODUCTS -->
+<section id="cr2-products">
+  <div class="section-label">Strategic Partnership</div>
+  <h2 class="section-heading">CR2.com — Products We Specialize In.</h2>
+  <p class="section-sub">We are authorized implementation partners for CR2.com's enterprise solutions, delivering world-class customization and deployment services.</p>
+
+  <div class="cr2-intro reveal">
+    <div class="cr2-content">
+      <div class="cr2-text">
+        <h3>CR2 Partnership & Expertise</h3>
+        <p>As a certified implementation partner for CR2.com, we bring deep domain expertise in deploying their enterprise-grade products across retail, financial services, and government sectors.</p>
+        <p>Our team has successfully customized and deployed CR2 solutions for 20+ mid-market and enterprise clients, with a 100% on-time deployment track record.</p>
+        <div class="cr2-highlights">
+          <div class="cr2-highlight">
+            <div class="cr2-highlight-icon">🎯</div>
+            <div class="cr2-highlight-content">
+              <h4>Platform Customization</h4>
+              <p>Tailor CR2 products to match your unique business workflows and regulatory requirements.</p>
+            </div>
+          </div>
+          <div class="cr2-highlight">
+            <div class="cr2-highlight-icon">🔌</div>
+            <div class="cr2-highlight-content">
+              <h4>Legacy System Integration</h4>
+              <p>Bridge CR2 solutions with existing enterprise systems for unified operations.</p>
+            </div>
+          </div>
+          <div class="cr2-highlight">
+            <div class="cr2-highlight-icon">📊</div>
+            <div class="cr2-highlight-content">
+              <h4>Business Analytics</h4>
+              <p>Build custom reports and dashboards to extract maximum value from CR2 data.</p>
+            </div>
+          </div>
+          <div class="cr2-highlight">
+            <div class="cr2-highlight-icon">🎓</div>
+            <div class="cr2-highlight-content">
+              <h4>Training & Support</h4>
+              <p>End-to-end user training and post-deployment managed support.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="cr2-logo">
+        CR2<br><span style="font-size: 0.6rem; font-weight: 500;">Enterprise Solutions</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA SECTION -->
+<section id="implementation-cta">
+  <div class="section-label" style="color:var(--accent2)">Ready to implement?</div>
+  <h2 class="section-heading">Let's plan your deployment together.</h2>
+  <p class="section-sub">Share your implementation requirements and we'll schedule a technical discovery call to map out a tailored roadmap.</p>
+
+  <div class="cta-buttons">
+    <a href="mailto:hello@ahamsys.com?subject=Implementation%20Services%20Inquiry" class="btn-primary">
+      Request a consultation
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="tel:+91-XXXXXXXXXX" class="btn-secondary">
+      📞 Call us
+    </a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <a class="logo" href="index.html"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/4RDyRXhpZgAATU0AKgAAAAgABAE7AAIAAAANAAAISodpAAQAAAABAAAIWJydAAEAAAAaAAAQ0OocAAcAAAgMAAAAPgAAAAAc6gAAAAgAAAAAAAAA[...]" alt="Ahamsys"> Ahamsys</a>
+  <span>© 2026 Ahamsys Consultancy. All rights reserved.</span>
+  <span>Bengaluru, India</span>
+</footer>
+
+<script>
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
