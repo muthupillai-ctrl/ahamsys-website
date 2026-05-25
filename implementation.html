@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CR2 Implementation Services — Ahamsys Consultancy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --ink: #1c2331;
+    --paper: #f8f9fb;
+    --accent: #2558c4;
+    --accent2: #c0533a;
+    --muted: #6b7585;
+    --border: rgba(28,35,49,0.1);
+    --card-bg: #ffffff;
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Source Sans 3', sans-serif; background: var(--paper); color: var(--ink); overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(248,249,251,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600; font-size: 1.55rem;
+    color: var(--ink); text-decoration: none;
+    letter-spacing: -0.02em;
+    display: flex; align-items: center; gap: 0.55rem;
+  }
+  .logo img { height: 36px; width: auto; display: block; }
+  .logo span { color: var(--accent); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { background: var(--ink); color: var(--paper) !important; padding: 0.55rem 1.4rem; border-radius: 100px; }
+  .nav-cta:hover { background: var(--accent) !important; }
+
+  /* HERO */
+  .page-hero {
+    padding: 9rem 4rem 5rem;
+    background: var(--ink);
+    position: relative; overflow: hidden;
+  }
+  .page-hero::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(37,88,196,0.2), transparent 70%);
+    pointer-events: none;
+  }
+  .breadcrumb { font-size: 0.8rem; color: rgba(248,249,251,0.45); margin-bottom: 1rem; }
+  .breadcrumb a { color: rgba(248,249,251,0.45); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--paper); }
+  .page-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700; color: var(--paper);
+    line-height: 1.15; max-width: 700px;
+    letter-spacing: -0.01em;
+  }
+  .page-hero p {
+    margin-top: 1.2rem; font-size: 1.05rem;
+    color: rgba(248,249,251,0.6); max-width: 600px;
+    line-height: 1.75; font-weight: 300;
+  }
+  .partner-badge {
+    display: inline-flex; align-items: center; gap: 0.6rem;
+    margin-top: 2rem;
+    background: rgba(248,249,251,0.07);
+    border: 1px solid rgba(248,249,251,0.15);
+    padding: 0.6rem 1.2rem; border-radius: 100px;
+    font-size: 0.8rem; color: rgba(248,249,251,0.7);
+  }
+  .partner-badge strong { color: var(--paper); }
+  .partner-badge a { color: var(--accent); text-decoration: none; }
+  .partner-badge a:hover { text-decoration: underline; }
+
+  /* SECTIONS */
+  section { padding: 5rem 4rem; }
+  .section-label {
+    font-size: 0.75rem; font-weight: 500; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+  }
+  .section-heading {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 700; line-height: 1.18;
+    letter-spacing: -0.01em; color: var(--ink);
+    max-width: 600px;
+  }
+  .section-sub { margin-top: 0.75rem; font-size: 1rem; line-height: 1.75; color: var(--muted); max-width: 580px; font-weight: 300; }
+
+  /* PRODUCTS GRID */
+  .products-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+  .product-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 2rem;
+    transition: box-shadow 0.3s, transform 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .product-card:hover { box-shadow: 0 16px 48px rgba(28,35,49,0.09); transform: translateY(-4px); }
+  .product-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent); transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .product-card:hover::after { transform: scaleX(1); }
+  .pc-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .pc-title { font-family: 'Playfair Display', serif; font-weight: 600; font-size: 1.1rem; margin-bottom: 0.5rem; }
+  .pc-desc { font-size: 0.875rem; line-height: 1.7; color: var(--muted); font-weight: 300; margin-bottom: 1rem; }
+  .pc-features { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+  .pc-features li { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+  .pc-features li::before { content: '✓'; color: var(--accent); font-weight: 600; font-size: 0.75rem; }
+
+  /* WHAT WE DO */
+  #services { background: #eef1f8; }
+  .services-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; margin-top: 3rem; }
+  .svc-card {
+    background: var(--card-bg); border: 1px solid var(--border);
+    border-radius: 18px; padding: 1.8rem;
+    display: flex; gap: 1.2rem; align-items: flex-start;
+    transition: box-shadow 0.3s;
+  }
+  .svc-card:hover { box-shadow: 0 8px 32px rgba(28,35,49,0.08); }
+  .svc-num {
+    font-family: 'Playfair Display', serif; font-weight: 700;
+    font-size: 1.4rem; color: var(--accent); min-width: 2rem; line-height: 1;
+  }
+  .svc-title { font-weight: 600; font-size: 0.975rem; margin-bottom: 0.3rem; }
+  .svc-desc { font-size: 0.85rem; line-height: 1.7; color: var(--muted); font-weight: 300; }
+
+  /* PROCESS */
+  #process { background: var(--ink); }
+  #process .section-label { color: var(--accent2); }
+  #process .section-heading { color: var(--paper); }
+  #process .section-sub { color: rgba(248,249,251,0.55); }
+  .process-steps { display: grid; grid-template-columns: repeat(5,1fr); gap: 1px; margin-top: 3rem; background: rgba(248,249,251,0.08); border-radius: 16px; overflow: hidden; }
+  .step {
+    background: var(--ink); padding: 1.8rem 1.4rem;
+    position: relative;
+    transition: background 0.3s;
+  }
+  .step:hover { background: rgba(37,88,196,0.15); }
+  .step-num { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 2rem; color: rgba(248,249,251,0.1); margin-bottom: 0.75rem; }
+  .step-title { font-weight: 600; font-size: 0.9rem; color: var(--paper); margin-bottom: 0.4rem; }
+  .step-desc { font-size: 0.8rem; color: rgba(248,249,251,0.45); line-height: 1.6; font-weight: 300; }
+
+  /* CTA */
+  #cta { background: var(--paper); text-align: center; padding: 6rem 4rem; }
+  #cta .section-heading { margin: 0 auto; }
+  #cta .section-sub { margin: 0.75rem auto 0; }
+  .cta-actions { margin-top: 2rem; display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--ink); color: var(--paper);
+    padding: 0.85rem 2rem; border-radius: 100px;
+    font-size: 0.925rem; font-weight: 500; text-decoration: none;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    border: 1.5px solid var(--border); color: var(--ink);
+    padding: 0.85rem 2rem; border-radius: 100px;
+    font-size: 0.925rem; font-weight: 500; text-decoration: none;
+    transition: border-color 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--ink); }
+
+  /* FOOTER */
+  footer {
+    background: #060810; padding: 2rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    color: rgba(248,249,251,0.3); font-size: 0.8rem; flex-wrap: wrap; gap: 1rem;
+  }
+  footer .logo { color: rgba(248,249,251,0.4); font-size: 1.2rem; }
+  footer .logo span { color: var(--accent); }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* MOBILE */
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    .page-hero { padding: 7rem 1.5rem 3rem; }
+    section { padding: 4rem 1.5rem; }
+    .products-grid { grid-template-columns: 1fr; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-steps { grid-template-columns: 1fr 1fr; }
+    footer { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/4RDyRXhpZgAATU0AKgAAAAgABAE7AAIAAAANAAAISodpAAQAAAABAAAIWJydAAEAAAAaAAAQ0OocAAcAAAgMAAAAPgAAAAAc6gAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE11dGh1IFBpbGxhaQAAAAWQAwACAAAAFAAAEKaQBAACAAAAFAAAELqSkQACAAAAAzQ3AACSkgACAAAAAzQ3AADqHAAHAAAIDAAACJoAAAAAHOoAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAyMDIyOjA5OjIxIDE1OjQ1OjQxADIwMjI6MDk6MjEgMTU6NDU6NDEAAABNAHUAdABoAHUAIABQAGkAbABsAGEAaQAAAP/hCx9odHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvADw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+DQo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSJ1dWlkOmZhZjViZGQ1LWJhM2QtMTFkYS1hZDMxLWQzM2Q3NTE4MmYxYiIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIi8+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iPjx4bXA6Q3JlYXRlRGF0ZT4yMDIyLTA5LTIxVDE1OjQ1OjQxLjQ3MjwveG1wOkNyZWF0ZURhdGU+PC9yZGY6RGVzY3JpcHRpb24+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPjxkYzpjcmVhdG9yPjxyZGY6U2VxIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+PHJkZjpsaT5NdXRodSBQaWxsYWk8L3JkZjpsaT48L3JkZjpTZXE+DQoJCQk8L2RjOmNyZWF0b3I+PC9yZGY6RGVzY3JpcHRpb24+PC9yZGY6UkRGPjwveDp4bXBtZXRhPg0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8P3hwYWNrZXQg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" alt="Ahamsys logo">Ahamsys<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">← Home</a></li>
+    <li><a href="index.html#services">Services</a></li>
+    <li><a href="index.html#industries">Industries</a></li>
+    <li><a href="index.html#why">Why Us</a></li>
+    <li><a href="index.html#contact" class="nav-cta">Get in Touch</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="breadcrumb"><a href="index.html">← Back to Home</a> &nbsp;/&nbsp; Implementation Services</div>
+  <h1>CR2 BankWorld Implementation & Customisation</h1>
+  <p>Ahamsys Consultancy delivers end-to-end implementation, integration, and customisation of CR2's Digital Banking, Digital Wallet, and Payment Hub platforms — helping banks go live faster with less risk.</p>
+  <div class="partner-badge">
+    🤝 <span>Implementation partner for <strong>CR2 BankWorld</strong> products — <a href="https://www.cr2.com" target="_blank">www.cr2.com</a></span>
+  </div>
+  <div style="margin-top:2rem;">
+    <a href="index.html" style="display:inline-flex;align-items:center;gap:0.5rem;background:rgba(248,249,251,0.1);border:1px solid rgba(248,249,251,0.25);color:var(--paper);padding:0.7rem 1.5rem;border-radius:100px;font-size:0.875rem;font-weight:500;text-decoration:none;transition:background 0.2s;" onmouseover="this.style.background='rgba(248,249,251,0.2)'" onmouseout="this.style.background='rgba(248,249,251,0.1)'">
+      ← Back to Home
+    </a>
+  </div>
+</div>
+
+<!-- PRODUCTS -->
+<section id="products">
+  <div class="section-label">CR2 Products we implement</div>
+  <h2 class="section-heading">Three powerful platforms. One experienced team.</h2>
+  <p class="section-sub">We implement and customise the full CR2 product suite, tailored to your bank's specific workflows, branding, and regulatory requirements.</p>
+
+  <div class="products-grid">
+    <div class="product-card reveal">
+      <div class="pc-icon">🏦</div>
+      <div class="pc-title">Digital Banking — BankWorld</div>
+      <div class="pc-desc">CR2's flagship platform enabling banks to deliver seamless digital experiences across retail, business, and agency banking channels.</div>
+      <ul class="pc-features">
+        <li>Retail Banking portal & mobile app</li>
+        <li>Business Banking self-service</li>
+        <li>Agency Banking for last-mile reach</li>
+        <li>Custom UI branding & theming</li>
+        <li>Core banking integration</li>
+        <li>Multi-language & multi-currency</li>
+      </ul>
+    </div>
+    <div class="product-card reveal" style="transition-delay:0.1s">
+      <div class="pc-icon">👛</div>
+      <div class="pc-title">Digital Wallet</div>
+      <div class="pc-desc">A comprehensive financial ecosystem enabling banks to offer wallet services without requiring a full bank account — driving financial inclusion.</div>
+      <ul class="pc-features">
+        <li>Low-cost wallet account setup</li>
+        <li>Remote payment capabilities</li>
+        <li>P2P transfers & bill payments</li>
+        <li>Merchant QR integration</li>
+        <li>KYC & onboarding workflows</li>
+        <li>Regulatory compliance config</li>
+      </ul>
+    </div>
+    <div class="product-card reveal" style="transition-delay:0.2s">
+      <div class="pc-icon">💳</div>
+      <div class="pc-title">Payment Hub</div>
+      <div class="pc-desc">CR2's Payment Hub embeds banks into the payments value chain — covering card issuing, ATM driving, and merchant acceptance end to end.</div>
+      <ul class="pc-features">
+        <li>Card issuing & lifecycle management</li>
+        <li>ATM driving & monitoring</li>
+        <li>Merchant acceptance integration</li>
+        <li>Switch & routing configuration</li>
+        <li>HSM & encryption setup</li>
+        <li>Scheme certification support</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="section-label">What we deliver</div>
+  <h2 class="section-heading">Our implementation & customisation services.</h2>
+  <p class="section-sub">From initial scoping to post-go-live support, we cover every phase of a CR2 deployment.</p>
+
+  <div class="services-grid">
+    <div class="svc-card reveal">
+      <div class="svc-num">01</div>
+      <div>
+        <div class="svc-title">Implementation & Deployment</div>
+        <div class="svc-desc">Full installation and configuration of CR2 BankWorld across your infrastructure — cloud, on-premise, or hybrid — with environment setup, parameter configuration, and go-live planning.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.1s">
+      <div class="svc-num">02</div>
+      <div>
+        <div class="svc-title">Core Banking Integration</div>
+        <div class="svc-desc">Connecting CR2 to your existing core banking system (Temenos, Finacle, Flexcube, or custom) via APIs, ISO 8583, or middleware — ensuring real-time transaction processing.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.1s">
+      <div class="svc-num">03</div>
+      <div>
+        <div class="svc-title">UI & Product Customisation</div>
+        <div class="svc-desc">Tailoring the CR2 front-end to match your bank's branding, language requirements, and UX standards — including custom screens, workflows, and product configurations.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.2s">
+      <div class="svc-num">04</div>
+      <div>
+        <div class="svc-title">HSM & Security Configuration</div>
+        <div class="svc-desc">Setting up Thales payShield HSM integration, DUKPT key management, PIN block encryption, and card personalisation workflows within the CR2 Payment Hub environment.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.2s">
+      <div class="svc-num">05</div>
+      <div>
+        <div class="svc-title">Testing & Certification</div>
+        <div class="svc-desc">End-to-end functional, integration, and regression testing. We support scheme certification (Visa, Mastercard) and host-to-host connectivity testing with payment networks.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.3s">
+      <div class="svc-num">06</div>
+      <div>
+        <div class="svc-title">Training & Handover</div>
+        <div class="svc-desc">Comprehensive training for your operations, IT, and business teams — covering system administration, parameter management, monitoring, and day-to-day operations.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.3s">
+      <div class="svc-num">07</div>
+      <div>
+        <div class="svc-title">Post Go-Live Support</div>
+        <div class="svc-desc">SLA-backed managed support after go-live — incident management, patch application, performance monitoring, and ongoing enhancements as your business grows.</div>
+      </div>
+    </div>
+    <div class="svc-card reveal" style="transition-delay:0.4s">
+      <div class="svc-num">08</div>
+      <div>
+        <div class="svc-title">Upgrade & Migration</div>
+        <div class="svc-desc">Seamless upgrades from older CR2 versions to the latest BankWorld release — with data migration, regression testing, and zero-downtime cutover planning.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="section-label">How we work</div>
+  <h2 class="section-heading">Our implementation methodology.</h2>
+  <p class="section-sub">A structured, low-risk delivery approach refined across multiple CR2 deployments.</p>
+
+  <div class="process-steps">
+    <div class="step reveal">
+      <div class="step-num">01</div>
+      <div class="step-title">Discovery & Scoping</div>
+      <div class="step-desc">Understand your bank's requirements, existing infrastructure, and regulatory environment. Define scope, timeline, and success criteria.</div>
+    </div>
+    <div class="step reveal" style="transition-delay:0.1s">
+      <div class="step-num">02</div>
+      <div class="step-title">Design & Architecture</div>
+      <div class="step-desc">Solution design including integration architecture, data flows, security model, and customisation specifications.</div>
+    </div>
+    <div class="step reveal" style="transition-delay:0.15s">
+      <div class="step-num">03</div>
+      <div class="step-title">Build & Configure</div>
+      <div class="step-desc">CR2 installation, parameter setup, integrations development, UI customisation, and HSM configuration in a dedicated test environment.</div>
+    </div>
+    <div class="step reveal" style="transition-delay:0.2s">
+      <div class="step-num">04</div>
+      <div class="step-title">Test & Certify</div>
+      <div class="step-desc">Functional, integration, UAT, and scheme certification testing. Defect resolution and sign-off before production.</div>
+    </div>
+    <div class="step reveal" style="transition-delay:0.25s">
+      <div class="step-num">05</div>
+      <div class="step-title">Go-Live & Support</div>
+      <div class="step-desc">Production cutover, hypercare support in the first weeks, staff training, and transition to ongoing managed support.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="section-label">Get started</div>
+  <h2 class="section-heading">Planning a CR2 implementation?</h2>
+  <p class="section-sub">Talk to us about your project. We'll share our experience and put together a tailored implementation plan for your bank.</p>
+  <div class="cta-actions">
+    <a href="mailto:hello@ahamsys.com" class="btn-primary">
+      Contact us
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+    <a href="https://www.cr2.com" target="_blank" class="btn-outline">Visit CR2 website ↗</a>
+    <a href="index.html" class="btn-outline">← Back to Home</a>
+  </div>
+</section>
+
+<footer>
+  <a class="logo" href="index.html"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAeAB4AAD/4RDyRXhpZgAATU0AKgAAAAgABAE7AAIAAAANAAAISodpAAQAAAABAAAIWJydAAEAAAAaAAAQ0OocAAcAAAgMAAAAPgAAAAAc6gAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAE11dGh1IFBpbGxhaQAAAAWQAwACAAAAFAAAEKaQBAACAAAAFAAAELqSkQACAAAAAzQ3AACSkgACAAAAAzQ3AADqHAAHAAAIDAAACJoAAAAAHOoAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAyMDIyOjA5OjIxIDE1OjQ1OjQxADIwMjI6MDk6MjEgMTU6NDU6NDEAAABNAHUAdABoAHUAIABQAGkAbABsAGEAaQAAAP/hCx9odHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvADw/eHBhY2tldCBiZWdpbj0n77u/JyBpZD0nVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkJz8+DQo8eDp4bXBtZXRhIHhtbG5zOng9ImFkb2JlOm5zOm1ldGEvIj48cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPjxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSJ1dWlkOmZhZjViZGQ1LWJhM2QtMTFkYS1hZDMxLWQzM2Q3NTE4MmYxYiIgeG1sbnM6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIi8+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iPjx4bXA6Q3JlYXRlRGF0ZT4yMDIyLTA5LTIxVDE1OjQ1OjQxLjQ3MjwveG1wOkNyZWF0ZURhdGU+PC9yZGY6RGVzY3JpcHRpb24+PHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9InV1aWQ6ZmFmNWJkZDUtYmEzZC0xMWRhLWFkMzEtZDMzZDc1MTgyZjFiIiB4bWxuczpkYz0iaHR0cDovL3B1cmwub3JnL2RjL2VsZW1lbnRzLzEuMS8iPjxkYzpjcmVhdG9yPjxyZGY6U2VxIHhtbG5zOnJkZj0iaHR0cDovL3d3dy53My5vcmcvMTk5OS8wMi8yMi1yZGYtc3ludGF4LW5zIyI+PHJkZjpsaT5NdXRodSBQaWxsYWk8L3JkZjpsaT48L3JkZjpTZXE+DQoJCQk8L2RjOmNyZWF0b3I+PC9yZGY6RGVzY3JpcHRpb24+PC9yZGY6UkRGPjwveDp4bXBtZXRhPg0KICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8P3hwYWNrZXQg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" alt="Ahamsys logo" style="height:28px">Ahamsys<span>.</span></a>
+  <span>© 2026 Ahamsys Consultancy. All rights reserved.</span>
+  <span>Bengaluru, India</span>
+</footer>
+
+<script>
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+</body>
+</html>
